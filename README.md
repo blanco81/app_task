@@ -164,3 +164,93 @@ El proyecto utiliza **Alembic** para gestionar las migraciones del esquema de la
   alembic upgrade head
   ```
   El `entrypoint.sh` ya ejecuta `alembic upgrade head` cada vez que el contenedor se inicia para asegurar que la base de datos esté siempre actualizada.
+
+---
+
+## 6. Ejemplos de uso con cURL
+
+### Autenticación
+
+**Registrar un nuevo usuario**
+```bash
+curl -X POST "http://localhost:8000/auth/register" -H "Content-Type: application/json" -d '{"email": "test@example.com", "password": "password123"}'
+```
+
+**Iniciar sesión (guardando la cookie de sesión)**
+```bash
+curl -X POST "http://localhost:8000/auth/login" -H "Content-Type: application/json" -d '{"username": "admin@task.com", "password": "admin"}' -c cookies.txt
+```
+
+**Obtener datos del usuario actual**
+```bash
+curl -X GET "http://localhost:8000/auth/me" -b cookies.txt
+```
+
+**Cerrar sesión**
+```bash
+curl -X GET "http://localhost:8000/auth/logout" -b cookies.txt
+```
+
+### Usuarios (Requiere rol de Administrador)
+
+**Listar todos los usuarios**
+```bash
+curl -X GET "http://localhost:8000/users/" -b cookies.txt
+```
+
+**Filtrar usuarios por email**
+```bash
+curl -X GET "http://localhost:8000/users/filter?search=test@example.com" -b cookies.txt
+```
+
+**Obtener un usuario por ID**
+```bash
+curl -X GET "http://localhost:8000/users/1" -b cookies.txt
+```
+
+**Actualizar un usuario**
+```bash
+curl -X PUT "http://localhost:8000/users/1" -H "Content-Type: application/json" -d '{"email": "newemail@example.com"}' -b cookies.txt
+```
+
+**Desactivar un usuario**
+```bash
+curl -X DELETE "http://localhost:8000/users/1" -b cookies.txt
+```
+
+**Reactivar un usuario**
+```bash
+curl -X POST "http://localhost:8000/users/activate/1" -b cookies.txt
+```
+
+### Tareas
+
+**Listar todas las tareas del usuario**
+```bash
+curl -X GET "http://localhost:8000/tasks/" -b cookies.txt
+```
+
+**Crear una nueva tarea**
+```bash
+curl -X POST "http://localhost:8000/tasks/" -H "Content-Type: application/json" -d '{"task_name": "Mi nueva tarea", "description": "Descripción de la tarea"}' -b cookies.txt
+```
+
+**Filtrar tareas por nombre**
+```bash
+curl -X GET "http://localhost:8000/tasks/filter?search=tarea" -b cookies.txt
+```
+
+**Obtener una tarea por ID**
+```bash
+curl -X GET "http://localhost:8000/tasks/1" -b cookies.txt
+```
+
+**Actualizar una tarea**
+```bash
+curl -X PUT "http://localhost:8000/tasks/1" -H "Content-Type: application/json" -d '{"task_name": "Nombre de tarea actualizado"}' -b cookies.txt
+```
+
+**Eliminar una tarea**
+```bash
+curl -X DELETE "http://localhost:8000/tasks/1" -b cookies.txt
+```
